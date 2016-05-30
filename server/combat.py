@@ -6,10 +6,10 @@ from game_utility import *
 
 def do_ambush(sawItComing, game):
     tile = game[IDX_map][game[IDX_location]]
-    advance_time(game)
-    game[IDX_hunger] += 1 if sawItComing else 2  #  combat accumulates extra hunger, moreso if ambushed
-    message = 'The party fights into ' + time_of_day(game[IDX_time])
-    message += ' to repel the initial attack' if sawItComing else ' with all their might to recover from the surprise attack'
+    #  advance_time(game)  #  decided to comment out, ambushes are now instant
+    add_combat_hunger(game, not sawItComing) #  combat accumulates extra hunger, moreso if ambushed
+    message = 'The party fights '
+    message += 'to repel the initial attack' if sawItComing else 'with all their might to recover from the surprise attack'
     message += ', and can now decide whether to run away or '
     message += 'finish it off.' if sawItComing else 'fight back.'
     return message
@@ -32,7 +32,7 @@ def do_attack_to_death(pName, pClass, game):
             damage = int(float(baseAttack) * (multiplier ** float(roll)))
             monsterHP -= damage
             advance_time(game)
-            game[IDX_hunger] += 1  #  combat costs extra hunger
+            add_combat_hunger(game, False)  #  combat costs extra hunger
             message += pName + ' strikes at the ' + monster_for_tile(tile) + ', '
             message += 'dealing ' + str(damage) + ' damage. '
             if monsterHP > 0:

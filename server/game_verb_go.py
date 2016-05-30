@@ -24,7 +24,7 @@ def game_verb_go_results(playerName, game, dir, connections):
    else:
       #  go is going to happen for real, change players' location and start fight if necessary
       game[IDX_location] = tileIdx
-      game[IDX_time] = game[IDX_time] + 1
+      advance_time(game)
       message += 'and entourage journey ' + dir + 'ward until ' + time_of_day(game[IDX_time])
       isMonster = game[IDX_map][tileIdx] & MASK_monster != 0
       newHere = game[IDX_map][tileIdx] & MASK_visited == 0

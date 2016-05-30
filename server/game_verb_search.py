@@ -9,8 +9,9 @@ def game_verb_search_results(pName, game, connections):
    message = pName
    isMonster = game[IDX_map][game[IDX_location]] & MASK_monster != 0
    if isMonster:
-      message += ' starts searching for ingredients, but is quickly deterred by the ' + monster_for_tile(game[IDX_map][game[IDX_location]]) + '.'
+      message += ' tries searching for ingredients, but is quickly deterred by the ' + monster_for_tile(game[IDX_map][game[IDX_location]]) + '.'
    else:
+      advance_time(game)
       firstSearch = game[IDX_map][game[IDX_location]] & MASK_searched == 0
       luck = 0.5 if firstSearch else 0.1
       #  print 'set luck to: ',luck
@@ -35,7 +36,6 @@ def game_verb_search_results(pName, game, connections):
                possFinds.append(name)
                #  print 'appended: ',name
       if len(possFinds) > 0 and luck > random.random():
-         game[IDX_time] += 1
          find = random.choice(possFinds)
          message += ' makes a royal mess of the area looking for ingredients until ' + time_of_day(game[IDX_time])
          message += ', and finds one ' + find + '! Booyah!'
@@ -43,7 +43,6 @@ def game_verb_search_results(pName, game, connections):
          if game[IDX_todolist][find] <= 0:
             game[IDX_todolist].pop(find)
       else:
-         game[IDX_time] += 1
          message += ' drives everyone to dig and pull up everything in sight, but to no avail. It is now '
          message += time_of_day(game[IDX_time]) + ' and still no closer to being done.'
    return message

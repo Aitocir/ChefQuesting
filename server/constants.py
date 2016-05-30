@@ -5,6 +5,7 @@ IDX_location = 2        # (GAME ONLY) index for players' location on map (0-255 
 IDX_time = 3            # (GAME ONLY) index for players' day and time (0+ int, mod 8 shows time, div by 8 plus 1 shows day)
 IDX_todolist = 4        # (GAME ONLY) index for players' ingredient list, dict of string:int (item-name:item-count-remaining-to-find)
 IDX_hunger = 5          # (GAME ONLY) index for players' hunger (death if >= x)
+IDX_alert = 6           # (GAME ONLY) an alert is pending for the game (hunger only for now)
 
 #  player metadata
 IDX_name = 0            # index for player's screen name (not unique)

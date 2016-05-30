@@ -72,7 +72,7 @@ def lobby_handler(gameStates, connections, player, message):
          newName = generate_game_name(gameStates)
          newPlayers = set()
          newPlayers.add(player)
-         gameStates[newName] = [newPlayers, generate_game_map(), MAP_start, 0, generate_game_ingredient_list(), 0]
+         gameStates[newName] = [newPlayers, generate_game_map(), MAP_start, 0, generate_game_ingredient_list(), 0, False]
          connections[player][IDX_gameId] = newName
          gameStates['Lobby'][IDX_players].remove(player)
          msg = 'Welcome to game ' + newName + '! Chat with your gamemates with [say] or start with a good [look] around.'
@@ -192,9 +192,9 @@ def game_thread(qNewcomers):
          welcomeMid = ''
          welcome1 = list_current_games(gameState, connections)
          if len(welcome1) == 0:
-            welcomeMid = ' is really your only option as there are currently no other games to [join].'
+            welcomeMid = 'is really your only option as there are currently no other games to [join].'
          else:
-            welcomeMid = ' or [join] any one of the following:\n\n'
+            welcomeMid = 'or [join] any one of the following:\n\n'
          welcome = welcome0 + welcomeMid + welcome1
          noob[2].put(TYPE_info + welcome)
       removals = []
@@ -218,6 +218,9 @@ def game_thread(qNewcomers):
                   gameState.pop(data[IDX_gameId])
                if len(gameState[oldGame][IDX_players]) == 0 and oldGame != 'Lobby':
                   gameState.pop(oldGame)
+               if gameState[data[IDX_gameId]][IDX_alert]:
+                  gameState[data[IDX_gameId]][IDX_alert] = False
+                  send_message_to_game(gameState[data[IDX_gameId]], describe_hunger(gameState[data[IDX_gameId]][IDX_hunger]), connections, TYPE_bad)
       for r in removals:
          connections.pop(r)
          print 'Lost connection with: ',r

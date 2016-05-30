@@ -48,12 +48,23 @@ def list_current_games(games, connections):
         return output[0:len(output)-3]
 
 def advance_time(game):
+    hb = game[IDX_hunger]
     game[IDX_time] += 1
     game[IDX_hunger] += 1
+    ha = game[IDX_hunger]
+    if ha >= 8 and (hb % 4) >= (ha % 4):
+        game[IDX_alert] = True
+
+def add_combat_hunger(game, caughtOffGuard):
+    hb = game[IDX_hunger]
+    game[IDX_hunger] += 2 if caughtOffGuard else 1
+    ha = game[IDX_hunger]
+    if ha >= 8 and (hb % 4) >= (ha % 4):
+        game[IDX_alert] = True
 
 def describe_hunger(hunger):
     if hunger < 4:
-        return ''
+        return 'Everyone is still full from their last meal.'
     elif hunger < 8:
         return 'The party could go for a snack, perhaps.'
     elif hunger < 12:
