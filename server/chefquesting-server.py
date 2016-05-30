@@ -186,7 +186,7 @@ def game_thread(qNewcomers):
       time.sleep(0.02)
       while not qNewcomers.empty():
          noob = qNewcomers.get()
-         connections[noob[0]] = ['UnnamedPlayer', 'Lobby', noob[1], noob[2], ()]
+         connections[noob[0]] = [generate_player_name(), 'Lobby', noob[1], noob[2], ()]
          gameState['Lobby'][IDX_players].add(noob[0])
          welcome0 = 'Welcome to Aitocirs Chef Questing server! [create] a new game '
          welcomeMid = ''
