@@ -29,7 +29,7 @@ def do_attack_to_death(pName, pClass, game):
         while monsterHP > 0:
             rounds += 1
             roll = d20()
-            damage = int(float(baseAttack) * (multiplier ** float(roll)))
+            damage = int(float(baseAttack) * (multiplier ** float(roll-1)))
             monsterHP -= damage
             advance_time(game)
             add_combat_hunger(game, False)  #  combat costs extra hunger
