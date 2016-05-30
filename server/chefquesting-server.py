@@ -99,7 +99,7 @@ def lobby_handler(gameStates, connections, player, message):
                      gameStates[name][IDX_players].add(player)
                      #  2) suggest user start with look around since we're not giving a game-specific message here
                      msg = 'Welcome to game ' + name + '! Chat with your gamemates with [say] or start with a good [look] around.'
-                     qPlayer.put(msg)
+                     qPlayer.put(TYPE_info + msg)
                      joinedGame = True
             if not joinedGame:
                errmsg = 'You try to find a game named ' + words[1] + ' but fail. Perhaps you could have tea with your imaginary friends instead?'

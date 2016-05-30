@@ -31,40 +31,46 @@ def color_for_type(t):
 
 def server_down(s, q):
     overflowData = ''
+    packetSize = -1
+    sizeSoFar = 0
     while 1:
         time.sleep(0.05)
         working = True
-        packetSize = -1
-        sizeSoFar = 0
         data = []
         if len(overflowData) > 0:
             data += overflowData
-            sizeSoFar += len(overflowData)
+            sizeSoFar = len(data)
             overflowData = ''
         while working:
-            datum = s.recv(1024)
+            datum = s.recv(16384)
             if len(datum) == 0:
                 s.close()
                 if sizeSoFar > 2:
                     q.put(''.join(data)[2:])
                 return
             data += datum
-            sizeSoFar += len(datum)
+            sizeSoFar = len(data)
             if sizeSoFar > 1 and packetSize == -1:
                 soFar = ''.join(data)
                 packetSize = (ord(soFar[0]) * 256) + ord(soFar[1])
             working = packetSize == -1 or sizeSoFar < (packetSize + 2)
         message = ''.join(data)
-        #   print 'Done with length ', len(message), ' and contents: ', message
-        if len(message) > 2:
-            if len(message) == 3:
-                if ord(message[2:]) == 127:
-                    s.close()
-                    return
-            q.put(message[2:(packetSize+2)])
-            if len(message) > (packetSize + 2):
-                overflowData = message[(packetSize+2):]
-                #   print 'Used overflow!'
+        messagesLeft = True
+        while messagesLeft:
+            if len(message) > 2:
+                if len(message) == 3:
+                    if ord(message[2:]) == 127:
+                        s.close()
+                        return
+                q.put(message[2:(packetSize+2)])
+                message = message[(packetSize+2):]
+                if len(message) < 2:
+                    packetSize = -1
+                    messagesLeft = False
+                    sizeSoFar = len(message)
+                else:
+                    packetSize = (ord(message[0]) * 256) + ord(message[1])
+                    messagesLeft = (packetSize + 2) <= len(message)
 
 
 def server_up(s, q):
@@ -139,9 +145,6 @@ def connection_thread(s):
         bksp += '\b' * len('I shall... ' + inputStr)
         sys.stdout.write(bksp)
         qUpload.put(inputStr)
-        # CURSOR_UP_ONE = '\x1b[1A'
-        # ERASE_LINE = '\x1b[2K'
-        # print(ERASE_LINE + CURSOR_UP_ONE)
 
 
 if __name__=="__main__":
